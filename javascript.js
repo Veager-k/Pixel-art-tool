@@ -1,27 +1,36 @@
 /*
     To add:
-    input via hover or click
     color
-    shading
     scaling pixel count
     appealing visual design
     grid toggle
 */
 
 const grid = document.querySelector(".grid");
+const gridSlider = document.querySelector("#gridSlider");
+//gridSlider.addEventListener("input", () =>generateGrid())
 
-for(let i=0;i<16*16;i++){
-    const div = document.createElement("div");
-    div.style.border = "0.05em solid black";
-    div.style.backgroundColor = "white";
-    div.dataset.hue = 0;
-    div.dataset.sat = 0;
-    div.dataset.shade = 100;
-    div.addEventListener("mouseover", (e) => color_cell(e));
-    div.classList.add("cell");
-    div.id = i;
-    grid.appendChild(div);
+function generateGrid(){
+    while(grid.firstChild){
+        grid.lastChild.removeEventListener("mouseover", (e) => color_cell(e));
+        grid.removeChild(grid.lastChild);
+    }
+    grid.style.gridTemplateRows = `repeat(${gridSlider.value}, 1fr)`;
+    grid.style.gridTemplateColumns = `repeat(${gridSlider.value}, 1fr)`;
+    for(let i=0;i<gridSlider.value*gridSlider.value;i++){
+        const div = document.createElement("div");
+        div.style.border = "0.05em solid black";
+        div.style.backgroundColor = "white";
+        div.dataset.hue = 0;
+        div.dataset.sat = 0;
+        div.dataset.shade = 100;
+        div.addEventListener("mouseover", (e) => color_cell(e));
+        div.classList.add("cell");
+        div.id = i;
+        grid.appendChild(div);
+    }
 }
+generateGrid();
 
 function color_cell(e){
     if(rainbowMode){
