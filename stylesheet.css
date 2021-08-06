@@ -22,3 +22,12 @@ body{
     display: flex;
     flex-direction: column;
 }
+#colorPicker{
+    visibility: hidden;
+}
+#colorPickerLabel{
+    background-color: black;
+    width: 15vW;
+    height: 15vW;
+    border-radius: 100%;
+}

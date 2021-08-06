@@ -1,14 +1,48 @@
 /*
     To add:
     color
-    scaling pixel count
+    color mode button
     appealing visual design
     grid toggle
 */
 
 const grid = document.querySelector(".grid");
 const gridSlider = document.querySelector("#gridSlider");
-//gridSlider.addEventListener("input", () =>generateGrid())
+const colorPickerLabel = document.querySelector("#colorPickerLabel");
+const colorPicker = document.querySelector("#colorPicker");
+colorPicker.addEventListener("input", (e) => updateColorLabel(e));
+
+function updateColorLabel(e){
+    colorPickerLabel.style.backgroundColor = e.target.value;
+    console.log(e.target.value);
+}
+
+function convertRGBtoHSL(rgb){
+    rgb = rgb.slice(4).split(",");
+    let r = parseInt(rgb[0])/255;
+    let g = parseInt(rgb[1].trim())/255;
+    let b = parseInt(rgb[2].replace(")"," ").trim())/255;
+
+    let Xmax = Math.max(r, g, b);
+    let Xmin = Math.min(r, g, b);
+    let chroma = Xmax-Xmin;
+    let hue, sat, light = (Xmax+Xmin)/2;
+
+    if(chroma===0) hue = 0;
+    else switch(Xmax){
+        case r: hue = (g-b)/chroma + (g < b ? 6 : 0); break;
+        case g: hue = 2+(b-r)/chroma; break;
+        case b: hue = 4+(r-g)/chroma; break;
+    }
+    hue /= 6;
+
+    if(light===0 || light===1) sat = 0;
+    else sat = light > 0.5 ? chroma/(2-Xmax-Xmin) : chroma/(Xmax+Xmin);
+    
+    hue = Math.round(hue*360);
+    sat *= 100;
+    light *= 100;
+}
 
 function generateGrid(){
     while(grid.firstChild){
@@ -33,6 +67,7 @@ function generateGrid(){
 generateGrid();
 
 function color_cell(e){
+    convertRGBtoHSL(window.getComputedStyle( e.target ,null).getPropertyValue('background-color'));
     if(rainbowMode){
         let newColor = Math.random()*360;
         e.target.dataset.hue = newColor;
@@ -42,7 +77,7 @@ function color_cell(e){
 
     }
     else if(shadeMode){
-        e.target.dataset.shade = parseInt(e.target.dataset.shade)-10;
+        e.target.dataset.shade = parseInt(e.target.dataset.shade)-15;
         // if a cell is shaded to full white > reset saturation
         if(e.target.dataset.shade<=0){
             e.target.dataset.shade = 0;
@@ -51,7 +86,7 @@ function color_cell(e){
         e.target.style.backgroundColor = `hsl(${e.target.dataset.hue}, ${e.target.dataset.sat}%, ${e.target.dataset.shade}%)`;
     }
     else if(lightMode){
-        e.target.dataset.shade = parseInt(e.target.dataset.shade)+10;
+        e.target.dataset.shade = parseInt(e.target.dataset.shade)+15;
         // if a cell is shaded to full white > reset saturation
         if(e.target.dataset.shade>=100){
             e.target.dataset.shade = 100;
