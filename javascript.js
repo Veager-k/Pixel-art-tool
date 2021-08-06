@@ -12,11 +12,6 @@ const colorPickerLabel = document.querySelector("#colorPickerLabel");
 const colorPicker = document.querySelector("#colorPicker");
 colorPicker.addEventListener("input", (e) => updateColorLabel(e));
 
-function updateColorLabel(e){
-    colorPickerLabel.style.backgroundColor = e.target.value;
-    console.log(e.target.value);
-}
-
 function convertRGBtoHSL(rgb){
     rgb = rgb.slice(4).split(",");
     let r = parseInt(rgb[0])/255;
@@ -42,6 +37,7 @@ function convertRGBtoHSL(rgb){
     hue = Math.round(hue*360);
     sat *= 100;
     light *= 100;
+    return [hue, sat, light];
 }
 
 function generateGrid(){
@@ -66,8 +62,14 @@ function generateGrid(){
 }
 generateGrid();
 
+let chosenColor = "black";
+function updateColorLabel(e){
+    colorPickerLabel.style.backgroundColor = e.target.value;
+    chosenColor = e.target.value;
+    console.log(e.target.value);
+}
+
 function color_cell(e){
-    convertRGBtoHSL(window.getComputedStyle( e.target ,null).getPropertyValue('background-color'));
     if(rainbowMode){
         let newColor = Math.random()*360;
         e.target.dataset.hue = newColor;
@@ -77,29 +79,32 @@ function color_cell(e){
 
     }
     else if(shadeMode){
-        e.target.dataset.shade = parseInt(e.target.dataset.shade)-15;
-        // if a cell is shaded to full white > reset saturation
-        if(e.target.dataset.shade<=0){
-            e.target.dataset.shade = 0;
-            e.target.dataset.sat = 0;
-        }
-        e.target.style.backgroundColor = `hsl(${e.target.dataset.hue}, ${e.target.dataset.sat}%, ${e.target.dataset.shade}%)`;
+        let HSL = convertRGBtoHSL(window.getComputedStyle( e.target ,null).getPropertyValue('background-color'));
+        HSL[2] -= 10;
+        e.target.style.backgroundColor = `hsl(${HSL[0]}, ${HSL[1]}%, ${HSL[2]}%)`;
     }
     else if(lightMode){
-        e.target.dataset.shade = parseInt(e.target.dataset.shade)+15;
-        // if a cell is shaded to full white > reset saturation
-        if(e.target.dataset.shade>=100){
-            e.target.dataset.shade = 100;
-            e.target.dataset.sat = 0;
-        }
-        e.target.style.backgroundColor = `hsl(${e.target.dataset.hue}, ${e.target.dataset.sat}%, ${e.target.dataset.shade}%)`;
+        let HSL = convertRGBtoHSL(window.getComputedStyle( e.target ,null).getPropertyValue('background-color'));
+        HSL[2] += 10;
+        e.target.style.backgroundColor = `hsl(${HSL[0]}, ${HSL[1]}%, ${HSL[2]}%)`;
     }
     else{
-        e.target.style.backgroundColor = "black";
+        e.target.style.backgroundColor = chosenColor;
         e.target.dataset.sat = 0;
         e.target.dataset.shade = 0;
     }
 }
+
+//resets coloring modes so they don't overlap
+function disableModes(){
+    rainbowMode = false;
+    shadeMode = false;
+    lightMode = false;
+}
+
+//default mode toggle
+const colorModeButton = document.querySelector("#colorModeButton");
+colorModeButton.addEventListener("click", () => disableModes());
 
 //rainbow toggle
 let rainbowMode = false;
@@ -108,10 +113,8 @@ rainbowButton.addEventListener("click", () => toggleRainbow())
 function toggleRainbow(){
     if(rainbowMode) rainbowMode = false;
     else{
+        disableModes()
         rainbowMode = true;
-        //resets other buttons so modes don't overlap
-        shadeMode = false;
-        lightMode = false;
     }
 }
 
@@ -122,10 +125,8 @@ shadeButton.addEventListener("click", () => toggleShade());
 function toggleShade(){
     if(shadeMode) shadeMode = false;
     else{
+        disableModes()
         shadeMode = true;
-        //resets other buttons so modes don't overlap
-        rainbowMode = false;
-        lightMode = false;
     }
 }
 
@@ -136,10 +137,8 @@ lightButton.addEventListener("click", () => toggleLight());
 function toggleLight(){
     if(lightMode) lightMode = false;
     else{
+        disableModes()
         lightMode = true;
-        //resets other buttons so modes don't overlap
-        rainbowMode = false;
-        shadeMode = false
     }
 }
 
