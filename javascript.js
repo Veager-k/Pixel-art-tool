@@ -5,6 +5,7 @@
 
 const grid = document.querySelector(".grid");
 const gridSlider = document.querySelector("#gridSlider");
+const gridSliderValues = document.querySelector("#gridSliderValues");
 const colorPickerLabel = document.querySelector("#colorPickerLabel");
 const colorPicker = document.querySelector("#colorPicker");
 colorPicker.addEventListener("input", (e) => updateColorLabel(e));
@@ -57,7 +58,7 @@ function generateGrid(){
         div.addEventListener("mouseover", (e) => color_cell(e));
         div.classList.add("cell");
         div.id = i;
-        grid.appendChild(div);
+        grid.appendChild(div); 
     }
 }
 generateGrid();
@@ -171,3 +172,5 @@ function clear(){
         cell.style.backgroundColor = "white";
     })
 }
+
+gridSlider.addEventListener("input", ()=> gridSliderValues.innerText = `Grid Size: ${gridSlider.value} x ${gridSlider.value}`);
