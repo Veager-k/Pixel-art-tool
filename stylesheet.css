@@ -18,7 +18,7 @@ body{
 .buttons{
     width: 15vw;
     margin-top: 15vh;
-    background-color: gray;
+    background-color: white;
     display: flex;
     flex-direction: column;
 }

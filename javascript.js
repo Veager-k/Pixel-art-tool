@@ -1,9 +1,6 @@
 /*
     To add:
-    color
-    color mode button
     appealing visual design
-    grid toggle
 */
 
 const grid = document.querySelector(".grid");
@@ -47,9 +44,12 @@ function generateGrid(){
     }
     grid.style.gridTemplateRows = `repeat(${gridSlider.value}, 1fr)`;
     grid.style.gridTemplateColumns = `repeat(${gridSlider.value}, 1fr)`;
-    for(let i=0;i<gridSlider.value*gridSlider.value;i++){
+    for(let i=0;i<gridSlider.value**2;i++){
         const div = document.createElement("div");
-        div.style.border = "0.05em solid black";
+        div.style.borderTop = "0.1em solid black";
+        div.style.borderLeft = "0.1em solid black";
+        if((i+1)%gridSlider.value===0) div.style.borderRight = "0.1em solid black";
+        if((i+1)>(gridSlider.value**2-gridSlider.value)) div.style.borderBottom = "0.1em solid black";
         div.style.backgroundColor = "white";
         div.dataset.hue = 0;
         div.dataset.sat = 0;
@@ -139,6 +139,23 @@ function toggleLight(){
     else{
         disableModes()
         lightMode = true;
+    }
+}
+
+//grid toggle
+let gridOn = true;
+const gridButton = document.querySelector("#gridButton");
+gridButton.addEventListener("click", ()=>toggleGrid());
+function toggleGrid(){
+    if(gridOn){
+        const allCells = document.querySelectorAll(".cell");
+        allCells.forEach((cell)=>{ cell.style.borderWidth = "0px";})
+        gridOn = false;
+    }
+    else{
+        const allCells = document.querySelectorAll(".cell");
+        allCells.forEach((cell)=>{cell.style.borderWidth = "0.1em"})
+        gridOn = true;
     }
 }
 
