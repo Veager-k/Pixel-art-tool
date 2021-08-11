@@ -1,14 +1,10 @@
-/*
-    To add:
-    appealing visual design
-*/
-
 const grid = document.querySelector(".grid");
 const gridSlider = document.querySelector("#gridSlider");
 const gridSliderValues = document.querySelector("#gridSliderValues");
 const colorPickerLabel = document.querySelector("#colorPickerLabel");
 const colorPicker = document.querySelector("#colorPicker");
 colorPicker.addEventListener("input", (e) => updateColorLabel(e));
+colorPicker.addEventListener("input", (e) => disableModes());
 
 function convertRGBtoHSL(rgb){
     rgb = rgb.slice(4).split(",");
@@ -81,12 +77,12 @@ function color_cell(e){
     }
     else if(shadeMode){
         let HSL = convertRGBtoHSL(window.getComputedStyle( e.target ,null).getPropertyValue('background-color'));
-        HSL[2] -= 10;
+        HSL[2] -= 15;
         e.target.style.backgroundColor = `hsl(${HSL[0]}, ${HSL[1]}%, ${HSL[2]}%)`;
     }
     else if(lightMode){
         let HSL = convertRGBtoHSL(window.getComputedStyle( e.target ,null).getPropertyValue('background-color'));
-        HSL[2] += 10;
+        HSL[2] += 15;
         e.target.style.backgroundColor = `hsl(${HSL[0]}, ${HSL[1]}%, ${HSL[2]}%)`;
     }
     else{
@@ -101,21 +97,25 @@ function disableModes(){
     rainbowMode = false;
     shadeMode = false;
     lightMode = false;
+    rainbowButton.style.backgroundColor = "#513B41";
+    shadeButton.style.backgroundColor = "#513B41";
+    lightButton.style.backgroundColor = "#513B41";
 }
 
 //default mode toggle
-const colorModeButton = document.querySelector("#colorModeButton");
-colorModeButton.addEventListener("click", () => disableModes());
+//const colorModeButton = document.querySelector("#colorModeButton");
+//colorModeButton.addEventListener("click", () => disableModes());
 
 //rainbow toggle
 let rainbowMode = false;
 const rainbowButton = document.querySelector("#rainbowButton");
 rainbowButton.addEventListener("click", () => toggleRainbow())
 function toggleRainbow(){
-    if(rainbowMode) rainbowMode = false;
+    if(rainbowMode) disableModes();
     else{
         disableModes()
         rainbowMode = true;
+        rainbowButton.style.backgroundColor = "#e27e36";
     }
 }
 
@@ -124,10 +124,11 @@ let shadeMode = false;
 const shadeButton = document.querySelector("#shadeButton");
 shadeButton.addEventListener("click", () => toggleShade());
 function toggleShade(){
-    if(shadeMode) shadeMode = false;
+    if(shadeMode) disableModes();
     else{
         disableModes()
         shadeMode = true;
+        shadeButton.style.backgroundColor = "#e27e36";
     }
 }
 
@@ -136,10 +137,11 @@ let lightMode = false;
 const lightButton = document.querySelector("#lightButton");
 lightButton.addEventListener("click", () => toggleLight());
 function toggleLight(){
-    if(lightMode) lightMode = false;
+    if(lightMode) disableModes();
     else{
         disableModes()
         lightMode = true;
+        lightButton.style.backgroundColor = "#e27e36";
     }
 }
 
@@ -152,11 +154,13 @@ function toggleGrid(){
         const allCells = document.querySelectorAll(".cell");
         allCells.forEach((cell)=>{ cell.style.borderWidth = "0px";})
         gridOn = false;
+        gridButton.style.backgroundColor = "#513B41";
     }
     else{
         const allCells = document.querySelectorAll(".cell");
         allCells.forEach((cell)=>{cell.style.borderWidth = "0.1em"})
         gridOn = true;
+        gridButton.style.backgroundColor = "#e27e36";
     }
 }
 
@@ -173,4 +177,6 @@ function clear(){
     })
 }
 
+//displays the currently selected grid size
 gridSlider.addEventListener("input", ()=> gridSliderValues.innerText = `Grid Size: ${gridSlider.value} x ${gridSlider.value}`);
+
